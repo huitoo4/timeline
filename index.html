@@ -13,6 +13,11 @@
   <div class="p-4 border-b flex justify-between items-center">
     <h1 class="text-xl font-bold">Mi Timeline</h1>
     <button id="addEventBtn" title="Nuevo evento" class="bg-black text-white px-4 py-2 rounded">+</button>
+    <!-- selector color barra -->
+    <label class="ml-4 flex items-center gap-2">
+      Color barra:
+      <input type="color" id="timelineColorPicker" value="#000000" title="Cambiar color de la barra del timeline">
+    </label>
   </div>
 
   <!-- zoom slider -->
@@ -64,6 +69,14 @@ let events = JSON.parse(localStorage.getItem("timelineEvents") || "[]");
 
 const timeline = document.getElementById("timeline");
 const wrapper = document.getElementById("timelineWrapper");
+const colorPicker = document.getElementById("timelineColorPicker");
+
+// cargar color guardado
+let savedTimelineColor = localStorage.getItem("timelineColor");
+if(savedTimelineColor){
+  timeline.style.backgroundColor = savedTimelineColor;
+  colorPicker.value = savedTimelineColor;
+}
 
 function saveEvents() {
   localStorage.setItem("timelineEvents", JSON.stringify(events));
@@ -147,6 +160,13 @@ function openView(ev) {
 document.getElementById("closeView").onclick = () => {
   viewModal.classList.add("hidden");
 };
+
+// selector color barra
+colorPicker.addEventListener("input", e => {
+  const color = e.target.value;
+  timeline.style.backgroundColor = color;
+  localStorage.setItem("timelineColor", color);
+});
 
 const zoomSlider = document.getElementById("zoomSlider");
 let scale = 1;
