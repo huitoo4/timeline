@@ -13,7 +13,6 @@
   <div class="p-4 border-b flex justify-between items-center">
     <h1 class="text-xl font-bold">Mi Timeline</h1>
     <button id="addEventBtn" title="Nuevo evento" class="bg-black text-white px-4 py-2 rounded">+</button>
-    <!-- selector color barra -->
     <label class="ml-4 flex items-center gap-2">
       Color barra:
       <input type="color" id="timelineColorPicker" value="#000000" title="Cambiar color de la barra del timeline">
@@ -30,8 +29,6 @@
   <div id="timelineContainer" class="flex-1 overflow-x-scroll relative px-32">
     <div id="timelineWrapper" class="relative h-full flex items-center">
       <div id="timeline" class="h-1 bg-black origin-center"></div>
-
-      <!-- fechas -->
       <div id="startDate" class="absolute left-0 top-1/2 -translate-y-8 text-sm text-gray-600">Inicio</div>
       <div id="endDate" class="absolute right-0 top-1/2 -translate-y-8 text-sm text-gray-600">Hoy</div>
     </div>
@@ -128,10 +125,19 @@ function renderTimeline() {
   const baseWidth = 3000;
   timeline.style.width = baseWidth + "px";
 
-  events.forEach((ev, i) => {
+  if(events.length === 0) return;
+
+  const start = new Date(birthDate).getTime();
+  const end = new Date().getTime();
+
+  events.forEach(ev => {
+    const evTime = new Date(ev.date).getTime();
+    const percent = (evTime - start) / (end - start);
+    const left = percent * (baseWidth - 200) + 100;
+
     const dot = document.createElement("div");
     dot.className = "absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black rounded-full cursor-pointer";
-    dot.style.left = (i / Math.max(events.length - 1, 1)) * (baseWidth - 200) + 100 + "px";
+    dot.style.left = left + "px";
 
     const label = document.createElement("div");
     label.className = "absolute -top-10 text-xs text-center w-40 -translate-x-1/2";
