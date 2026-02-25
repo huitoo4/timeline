@@ -32,11 +32,20 @@
       <div id="timeline" class="h-1 bg-black origin-center"></div>
 
       <!-- fechas -->
-      <div id="startDate" class="absolute left-0 top-1/2 -translate-y-8 text-sm text-gray-600">Diciembre 2007</div>
-      <div id="endDate" class="absolute right-0 top-1/2 -translate-y-8 text-sm text-gray-600">Febrero 2026</div>
+      <div id="startDate" class="absolute left-0 top-1/2 -translate-y-8 text-sm text-gray-600">Inicio</div>
+      <div id="endDate" class="absolute right-0 top-1/2 -translate-y-8 text-sm text-gray-600">Hoy</div>
     </div>
   </div>
 
+</div>
+
+<!-- modal pedir fecha de nacimiento -->
+<div id="birthModal" class="fixed inset-0 bg-black/40 flex items-center justify-center">
+  <div class="bg-white p-6 rounded shadow w-96">
+    <h2 class="text-lg font-bold mb-4">Introduce tu fecha de nacimiento</h2>
+    <input id="birthDateInput" type="date" class="border p-2 w-full mb-4">
+    <button id="saveBirthDate" class="bg-black text-white px-4 py-2 rounded w-full">Guardar</button>
+  </div>
 </div>
 
 <!-- modal añadir evento -->
@@ -66,16 +75,44 @@
 
 <script>
 let events = JSON.parse(localStorage.getItem("timelineEvents") || "[]");
-
 const timeline = document.getElementById("timeline");
 const wrapper = document.getElementById("timelineWrapper");
 const colorPicker = document.getElementById("timelineColorPicker");
+const startDateEl = document.getElementById("startDate");
+const endDateEl = document.getElementById("endDate");
 
 // cargar color guardado
 let savedTimelineColor = localStorage.getItem("timelineColor");
 if(savedTimelineColor){
   timeline.style.backgroundColor = savedTimelineColor;
   colorPicker.value = savedTimelineColor;
+}
+
+// pedir fecha de nacimiento si no está
+let birthDate = localStorage.getItem("birthDate");
+const birthModal = document.getElementById("birthModal");
+if(!birthDate){
+  birthModal.classList.add("flex");
+} else {
+  birthModal.classList.remove("flex");
+  startDateEl.innerText = formatDate(birthDate);
+}
+
+// guardar fecha de nacimiento
+document.getElementById("saveBirthDate").onclick = () => {
+  const input = document.getElementById("birthDateInput").value;
+  if(!input) return;
+  birthDate = input;
+  localStorage.setItem("birthDate", birthDate);
+  startDateEl.innerText = formatDate(birthDate);
+  birthModal.classList.remove("flex");
+}
+
+// formatear fecha para mostrar
+function formatDate(dateStr){
+  const d = new Date(dateStr);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return d.toLocaleDateString('es-ES', options);
 }
 
 function saveEvents() {
@@ -190,6 +227,9 @@ document.getElementById("timelineContainer").addEventListener("wheel", e => {
   zoomSlider.value = scale;
   applyZoom();
 }, { passive: false });
+
+// poner fecha final como hoy
+endDateEl.innerText = formatDate(new Date().toISOString().split('T')[0]);
 </script>
 
 </body>
